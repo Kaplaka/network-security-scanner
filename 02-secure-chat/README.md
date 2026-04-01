@@ -1,22 +1,71 @@
-# End-to-End Encrypted Chat System (Hybrid Cryptography)
+# Secure Chat - Hybrid Encryption (RSA + AES)
 
-##  Project Overview
-This project is a secure communication tool that demonstrates **End-to-End Encryption (E2EE)** using a hybrid cryptographic approach. It combines the security of **RSA** (Asymmetric) with the efficiency of **AES-style XOR** (Symmetric) encryption.
+A secure client-server chat application using hybrid encryption:
+- RSA for secure key exchange
+- AES for message encryption
+- TCP sockets for communication
+- End-to-end encrypted messaging
 
-##  Accomplished Objectives
-* **Hybrid Encryption Implementation**: Successfully integrated RSA and AES to secure both the data and the key exchange.
-* **Socket Programming**: Developed a functional Client-Server architecture using Python's `socket` and `pickle` libraries.
-* **Custom Crypto from Scratch**: Implemented core cryptographic logic without external high-level libraries to demonstrate deep understanding of the algorithms.
+## Features
 
-## How it Works
-1. **The Handshake**: Upon connection, the Server sends its **RSA Public Key** to the Client.
-2. **Key Encapsulation**: For every message, the Client generates a unique **AES key**, encrypts the message with it, and then encrypts the AES key using the Server's Public Key.
-3. **Secure Decryption**: Only the holder of the **RSA Private Key** (the Server) can decrypt the AES key to unlock the message.
+- Secure client-server communication
+- Hybrid encryption (RSA + AES)
+- Bidirectional encrypted chat
+- Username support
+- Timestamped messages
+- Python socket programming
+- Cryptography implementation
 
-##  Technical Skills
-* **Cryptography**: RSA, Symmetric/Asymmetric differences, Key exchange.
-* **Network Security**: Secure socket handling, data serialization with `pickle`.
-* **Python**: Modular code architecture and complex data structures.
+## How It Works
 
----
-**Author:** Jonas KAPLAKA(Student) – Cybersecurity Portfolio Project
+1. Server generates RSA keys
+2. Client connects and exchanges public keys
+3. Client encrypts message using AES
+4. AES key encrypted using RSA
+5. Server decrypts RSA → gets AES key
+6. Server decrypts message
+7. Same process in reverse
+
+## 📁 Project Structure
+
+02-secure-chat/
+│
+├── __init__.py
+├── client.py
+├── server.py
+├── README.md
+│
+└── crypto/
+   ├── rsa.py
+   ├── aes.py
+   └── hybrid.py
+
+## ▶️ Run
+
+### Start server
+python3 server.py
+### Start client
+python3 server.py
+
+## Example
+[14:42] Jonas: Hello
+[14:42] Server: Secure channel established
+
+
+## 🔐 Security Concepts
+
+- Asymmetric encryption (RSA)
+- Symmetric encryption (AES)
+- Hybrid cryptosystem
+- Secure key exchange
+- End-to-end encryption
+- Socket networking
+
+## Educational Purpose
+
+This project demonstrates how secure messaging systems like WhatsApp
+and Signal implement hybrid encryption.
+
+## Author
+
+Cybersecurity Student – Secure Chat Project

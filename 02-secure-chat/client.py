@@ -1,49 +1,49 @@
 import socket
 import pickle
-import sys
-from crypto.hybrid import encrypt_message
+from datetime import datetime
+from crypto.hybrid import encrypt_message, decrypt_message
+from crypto.rsa import generate_keys
 
 HOST = "127.0.0.1"
 PORT = 5000
 
+def now():
+    return datetime.now().strftime("%H:%M")
+
 def main():
+    username = input("Enter your name: ")
+
     client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    
-    try:
-        client.connect((HOST, PORT))
-    except ConnectionRefusedError:
-        print("Error: Could not connect to server. Is it running?")
-        return
+    client.connect((HOST, PORT))
 
-    # Recevoir la clé publique du serveur
-    print("Waiting for public key...")
-    public_key = pickle.loads(client.recv(4096))
+    server_public_key = pickle.loads(client.recv(4096))
 
-    print("Connected to secure server.")
-    print("Type messages (Type 'quit' to exit)\n")
+    public_key, private_key = generate_keys()
+    client.send(pickle.dumps(public_key))
+
+    print("Secure chat started\n")
 
     while True:
-        try:
-            message = input("You: ")
-            if message.lower() == 'quit':
-                break
-            if not message:
-                continue
+        message = input(f"[{now()}] {username}: ")
 
-            # Chiffrement hybride
-            encrypted_key, encrypted_message = encrypt_message(message, public_key)
-            
-            # Envoi
-            data = pickle.dumps((encrypted_key, encrypted_message))
-            client.send(data)
-            
-        except KeyboardInterrupt:
-            break
-        except Exception as e:
-            print(f"Error: {e}")
-            break
+        encrypted_key, encrypted_message = encrypt_message(
+            message,
+            server_public_key
+        )
 
-    client.close()
+        client.send(pickle.dumps((encrypted_key, encrypted_message)))
+
+        data = client.recv(4096)
+
+        encrypted_key, encrypted_message = pickle.loads(data)
+
+        reply = decrypt_message(
+            encrypted_key,
+            encrypted_message,
+            private_key
+        )
+
+        print(f"[{now()}] Server: {reply}")
 
 if __name__ == "__main__":
     main()
